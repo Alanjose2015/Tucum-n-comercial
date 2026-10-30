@@ -417,7 +417,7 @@
 
                 <div class="form-container">
                     <h4 style="margin-bottom: 1rem">➕ Publicar nuevo producto</h4>
-                    <form id="form-producto" action="mailto:poncejose027@gmail.com" method="post" enctype="text/plain">
+                    <form id="form-producto" enctype="multipart/form-data" action="mailto:poncejose027@gmail.com" method="post" enctype="text/plain">
                         <div class="form-group">
                             <label for="prod-nombre">Nombre del producto *</label>
                             <input type="text" id="prod-nombre" name="Nombre" required placeholder="Ej: Pan artesanal, Servicio de plomería">
@@ -430,6 +430,26 @@
                             <label for="prod-desc">Descripción</label>
                             <textarea id="prod-desc" name="Descripcion" placeholder="Detalles, horarios, zona de entrega..."></textarea>
                         </div>
+                        <!-- 🔗 Enlace del Video -->
+<div class="form-group">
+  <label for="video-enlace">🔗 Enlace del video (opcional)</label>
+  <input type="url" id="video-enlace" placeholder="Pegá aquí el link de TikTok, Reels o YouTube">
+</div>
+
+<!-- 🖼️ Subir Imágenes con Vista Previa -->
+<div class="form-group">
+  <label for="prod-imagenes">🖼️ Imágenes del producto</label>
+  <input 
+    type="file" 
+    id="prod-imagenes" 
+    accept="image/*" 
+    multiple
+    onchange="mostrarVistaPrevia(event)"
+    style="width: 100%; padding: 8px; margin-top: 4px;"
+  >
+  <div id="vista-previa-imagenes" style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+</div>
+                        
                         <div class="form-group">
                             <label for="prod-cat">Categoría</label>
                             <select id="prod-cat" name="Categoria">
@@ -562,6 +582,7 @@ const firebaseConfig = {
 // Inicializar Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const storage = firebase.storage();
 
 // Colecciones de Firestore
 const coleccionProductos = db.collection('productos');
@@ -943,7 +964,90 @@ document.addEventListener('DOMContentLoaded', function() {
         cargarMisProductos();
     });
 });
+// 🖼️ Mostrar vista previa de las imágenes seleccionadas
+function mostrarVistaPrevia(event) {
+  const contenedor = document.getElementById('vista-previa-imagenes');
+  contenedor.innerHTML = '';
 
+  const archivos = event.target.files;
+  for (let i = 0; i < archivos.length; i++) {
+    const archivo = archivos[i];
+    if (archivo.type.startsWith('image/')) {
+      const lector = new FileReader();
+      lector.onload = function(e) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.style.width = '90px';
+        img.style.height = '90px';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '8px';
+        img.style.border = '2px solid #e5e7eb';
+        contenedor.appendChild(img);
+      };
+      lector.readAsDataURL(archivo);
+    }
+  }
+}
+
+// 🚀 Publicar producto con imágenes en Firebase Storage
+document.getElementById('form-producto').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const boton = this.querySelector('button[type="submit"]');
+  boton.disabled = true;
+  boton.textContent = "Publicando...";
+
+  try {
+    // 1️⃣ Recopilar datos del formulario
+    const nombre = document.getElementById('prod-nombre').value.trim();
+    const precio = document.getElementById('prod-precio').value.trim();
+    const descripcion = document.getElementById('prod-desc').value.trim();
+    const categoria = document.getElementById('prod-categoria').value;
+    const videoEnlace = document.getElementById('video-enlace').value.trim();
+    const archivosImagenes = document.getElementById('prod-imagenes').files;
+
+    // 2️⃣ Subir imágenes a Firebase Storage y obtener sus enlaces
+    const urlsImagenes = [];
+    
+    for (let i = 0; i < archivosImagenes.length; i++) {
+      const archivo = archivosImagenes[i];
+      const nombreArchivo = `productos/${Date.now()}_${archivo.name}`;
+      const referenciaStorage = storage.ref(nombreArchivo);
+      
+      // Subir archivo
+      const snapshot = await referenciaStorage.put(archivo);
+      // Obtener el enlace público
+      const url = await snapshot.ref.getDownloadURL();
+      urlsImagenes.push(url);
+    }
+
+    // 3️⃣ Guardar todo en Firestore
+    await coleccionProductos.add({
+      nombre: nombre,
+      precio: precio,
+      descripcion: descripcion,
+      categoria: categoria,
+      videoEnlace: videoEnlace || null,
+      imagenes: urlsImagenes,
+      vendedorNombre: usuarioActual.nombre,
+      vendedorWhatsapp: usuarioActual.whatsapp,
+      fecha: new Date()
+    });
+
+    // ✅ Éxito
+    alert("✅ ¡Producto publicado con éxito!");
+    this.reset();
+    document.getElementById('vista-previa-imagenes').innerHTML = '';
+
+  } catch (error) {
+    console.error("Error:", error);
+    alert("❌ Error al publicar: " + error.message);
+  } finally {
+    boton.disabled = false;
+    boton.textContent = "Publicar producto";
+  }
+});
+    
 </script>
 </body>
 </html>
