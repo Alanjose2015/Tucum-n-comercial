@@ -459,64 +459,66 @@
                                 <option value="Ropa y Calzado">👕 Ropa y Calzado</option>
                                 <option value="Tecnología">📱 Tecnología</option>
                                 <option value="Hogar">🛋️ Hogar</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-success btn-block">✅ Publicar mi producto</button>
-                        <a href="https://wa.me/5493815727447?text=Hola! Quisiera consultar sobre una publicación en Tucumán Comercial" target="_blank" class="btn btn-primary btn-block" style="text-align: center; margin-top: 0.5rem;">💬 Consultar por WhatsApp</a>
-                    </form>
-                </div>
-
-                <h4 style="margin: 2rem 0 1rem">📋 Mis publicaciones</h4>
-                <div id="mis-publicaciones">
-                    <p class="hint">Todavía no publicaste ningún producto. ¡Publicá tu primero arriba! 🎉</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div id="modal-login" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-login-titulo">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-login-titulo" class="modal-title">🔑 Iniciar Sesión</h3>
-                <button class="modal-close" data-modal-close="modal-login" aria-label="Cerrar">&times;</button>
-            </div>
-            <form id="form-login">
-                <div class="form-group">
-                    <label for="login-correo">Correo electrónico</label>
-                    <input type="email" id="login-correo" required autocomplete="email">
-                </div>
-                <div class="form-group">
-                    <label for="login-clave">Contraseña</label>
-                    <input type="password" id="login-clave" required autocomplete="current-password">
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
-                <div id="msg-login" class="message" aria-live="polite"></div>
-            </form>
-            <p style="text-align: center; margin-top: 1rem">
-                <button class="link" data-switch="modal-recuperar">¿Olvidaste tu contraseña?</button>
-            </p>
-            <p style="text-align: center">
-                <button class="link" data-switch="modal-registro">¿No tenés cuenta? Crear una</button>
-            </p>
+                                      </select>
         </div>
+        <button type="submit" class="btn btn-success btn-block">Publicar mi producto</button>
+      </form>
+      <a href="https://wa.me/5493815727447?text=Hola! Quisiera consultar sobre una publicación en Tucumán Comercial..."></a>
     </div>
+  </div>
 
-    <div id="modal-registro" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-registro-titulo">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-registro-titulo" class="modal-title">📝 Crear tu cuenta</h3>
-                <button class="modal-close" data-modal-close="modal-registro" aria-label="Cerrar">&times;</button>
-            </div>
-            <form id="form-registro" action="mailto:poncejose027@gmail.com" method="post" enctype="text/plain">
-                <div class="form-group">
-                    <label for="reg-nombre">Tu nombre / Nombre del negocio *</label>
-                    <input type="text" id="reg-nombre" name="Nombre" required autocomplete="name">
-                </div>
-                <div class="form-group">
-                    <label for="reg-correo">Correo electrónico *</label>
-                    <input type="email" id="reg-correo" name="Correo" required autocomplete="email">
-                </div>
-                <div class="form-group">
+  <h4 style="margin: 2rem 0 1rem;">Mis publicaciones</h4>
+  <div id="mis-publicaciones">
+    <p class="hint">Todavía no publicaste ningún producto. ¡Publicá tu primero arriba! 🎉</p>
+  </div>
+</section>
+</main>
+
+<div id="modal-login" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-login-titulo">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-login-titulo" class="modal-title">🔐 Iniciar Sesión</h3>
+      <button class="modal-close" data-modal-close="modal-login" aria-label="Cerrar">&times;</button>
+    </div>
+    <form id="form-login">
+      <div class="form-group">
+        <label for="login-correo">Correo electrónico</label>
+        <input type="email" id="login-correo" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="login-clave">Contraseña</label>
+        <input type="password" id="login-clave" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+      <div id="msg-login" class="message" aria-live="polite"></div>
+    </form>
+    <p style="text-align: center; margin-top: 1rem;">
+      <button class="link" data-switch-modal="modal-recuperar">¿Olvidaste tu contraseña?</button>
+    </p>
+    <p style="text-align: center;">
+      <button class="link" data-switch-modal="modal-registro">¿No tenés cuenta? Crear una nueva</button>
+    </p>
+  </div>
+</div>
+
+<div id="modal-registro" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-registro-titulo">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-registro-titulo" class="modal-title">📝 Crear tu cuenta</h3>
+      <button class="modal-close" data-modal-close="modal-registro" aria-label="Cerrar">&times;</button>
+    </div>
+    <form id="form-registro">
+      <div class="form-group">
+        <label for="reg-nombre">Tu nombre / Nombre del negocio</label>
+        <input type="text" id="reg-nombre" name="Nombre" required autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label for="reg-correo">Correo electrónico</label>
+        <input type="email" id="reg-correo" name="Correo" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="reg-wp">WhatsApp de contacto</label>
+                                                                           
                     <label for="reg-wp">Whatsapp de contacto *</label>
                     <input type="tel" id="reg-wp" name="Whatsapp" required placeholder="+54 9 381 123-4567" value="3815727447">
                 </div>
