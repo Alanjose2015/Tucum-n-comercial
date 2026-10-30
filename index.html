@@ -989,36 +989,72 @@ function mostrarVistaPrevia(event) {
   }
 }
 
+// 🖼️ Mostrar vista previa de las imágenes seleccionadas
+function mostrarVistaPrevia(event) {
+  const contenedor = document.getElementById('vista-previa-imagenes');
+  if (!contenedor) return;
+  
+  contenedor.innerHTML = '';
+  const archivos = event.target.files;
+  
+  for (let i = 0; i < archivos.length; i++) {
+    const archivo = archivos[i];
+    if (archivo.type.startsWith('image/')) {
+      const lector = new FileReader();
+      lector.onload = function(e) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.style.width = '90px';
+        img.style.height = '90px';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '8px';
+        img.style.border = '2px solid #e5e7eb';
+        contenedor.appendChild(img);
+      };
+      lector.readAsDataURL(archivo);
+    }
+  }
+}
+
 // 🚀 Publicar producto con imágenes en Firebase Storage
 document.getElementById('form-producto').addEventListener('submit', async function(e) {
   e.preventDefault();
+
+  const formulario = e.target;
+  const boton = formulario.querySelector('button[type="submit"]');
   
-  const boton = this.querySelector('button[type="submit"]');
-  boton.disabled = true;
-  boton.textContent = "Publicando...";
+  if (boton) {
+    boton.disabled = true;
+    boton.textContent = "Publicando...";
+  }
 
   try {
-    // 1️⃣ Recopilar datos del formulario
-    const nombre = document.getElementById('prod-nombre').value.trim();
-    const precio = document.getElementById('prod-precio').value.trim();
-    const descripcion = document.getElementById('prod-desc').value.trim();
-    const categoria = document.getElementById('prod-categoria').value;
-    const videoEnlace = document.getElementById('video-enlace').value.trim();
-    const archivosImagenes = document.getElementById('prod-imagenes').files;
+    // 1️⃣ Recopilar datos del formulario — IDs CORREGIDOS
+    const nombre = document.getElementById('prod-nombre')?.value.trim() || '';
+    const precio = document.getElementById('prod-precio')?.value.trim() || '';
+    const descripcion = document.getElementById('prod-desc')?.value.trim() || '';
+    const categoria = document.getElementById('prod-cat')?.value || 'General';
+    const videoEnlace = document.getElementById('video-enlace')?.value.trim() || '';
+    const archivosImagenes = document.getElementById('prod-imagenes')?.files || [];
 
-    // 2️⃣ Subir imágenes a Firebase Storage y obtener sus enlaces
+    if (!nombre || !precio) {
+      alert("⚠️ Completá al menos Nombre y Precio del producto");
+      return;
+    }
+
+    // 2️⃣ Subir imágenes a Firebase Storage
     const urlsImagenes = [];
     
-    for (let i = 0; i < archivosImagenes.length; i++) {
-      const archivo = archivosImagenes[i];
-      const nombreArchivo = `productos/${Date.now()}_${archivo.name}`;
-      const referenciaStorage = storage.ref(nombreArchivo);
-      
-      // Subir archivo
-      const snapshot = await referenciaStorage.put(archivo);
-      // Obtener el enlace público
-      const url = await snapshot.ref.getDownloadURL();
-      urlsImagenes.push(url);
+    if (archivosImagenes.length > 0) {
+      for (let i = 0; i < archivosImagenes.length; i++) {
+        const archivo = archivosImagenes[i];
+        const nombreArchivo = `productos/${Date.now()}_${archivo.name}`;
+        const referenciaStorage = storage.ref(nombreArchivo);
+        
+        const snapshot = await referenciaStorage.put(archivo);
+        const url = await snapshot.ref.getDownloadURL();
+        urlsImagenes.push(url);
+      }
     }
 
     // 3️⃣ Guardar todo en Firestore
@@ -1029,22 +1065,24 @@ document.getElementById('form-producto').addEventListener('submit', async functi
       categoria: categoria,
       videoEnlace: videoEnlace || null,
       imagenes: urlsImagenes,
-      vendedorNombre: usuarioActual.nombre,
-      vendedorWhatsapp: usuarioActual.whatsapp,
+      vendedorNombre: usuarioActual?.nombre || 'Anónimo',
+      vendedorWhatsapp: usuarioActual?.whatsapp || '',
       fecha: new Date()
     });
 
     // ✅ Éxito
     alert("✅ ¡Producto publicado con éxito!");
-    this.reset();
-    document.getElementById('vista-previa-imagenes').innerHTML = '';
+    formulario.reset();
+    if (contenedor) contenedor.innerHTML = '';
 
   } catch (error) {
-    console.error("Error:", error);
-    alert("❌ Error al publicar: " + error.message);
+    console.error("Error completo:", error);
+    alert("❌ Error: " + error.message + "\nCódigo: " + error.code);
   } finally {
-    boton.disabled = false;
-    boton.textContent = "Publicar producto";
+    if (boton) {
+      boton.disabled = false;
+      boton.textContent = "Publicar producto";
+    }
   }
 });
     
